@@ -17,35 +17,46 @@ public class StudentController {
             default -> null;
         };
     }
-    private String calculateLetterGrades(double grade){
-        int value = (int)Math.round(grade);
-        if(value >= 95){
-            return "A";
-        } else if (value >= 90) {
-            return "A-";
-        } else if (value >= 86) {
-            return "B+";
-        } else if (value >= 82) {
-            return "B";
-        } else if (value >= 78) {
-            return "B-";
-        } else if (value >= 74) {
-            return "C+";
-        } else if (value >= 70) {
-            return "C";
-        } else if (value >= 63) {
-            return "C-";
-        } else if (value >= 57) {
-            return "D+";
-        } else if (value >= 51) {
-            return "D";
-        } else{
-            return "F";
+    public void calculateLetterGrades(List<Student> studentList){
+        double average = 0;
+        int standardDeviation = 5;
+
+        for (Student student : studentList) {
+            average += student.getGrade();
+        }
+        average = average / studentList.size();
+
+        for (Student student : studentList) {
+            int newGrade = (int) (((student.getGrade() - average) / standardDeviation) * 10 + student.getGrade());
+
+            if (newGrade >= average + standardDeviation * 9) {
+                student.setLetterGrade("A");
+            } else if (newGrade >= average + standardDeviation * 8) {
+                student.setLetterGrade("A-");
+            } else if (newGrade >= average + standardDeviation * 7) {
+                student.setLetterGrade("B+");
+            } else if (newGrade >= average + standardDeviation * 6) {
+                student.setLetterGrade("B");
+            } else if (newGrade >= average + standardDeviation * 5) {
+                student.setLetterGrade("B-");
+            } else if (newGrade >= average + standardDeviation * 4) {
+                student.setLetterGrade("C+");
+            } else if (newGrade >= average + standardDeviation * 3) {
+                student.setLetterGrade("C");
+            } else if (newGrade >= average + standardDeviation * 2) {
+                student.setLetterGrade("C-");
+            } else if (newGrade >= average + standardDeviation) {
+                student.setLetterGrade("D+");
+            } else if (newGrade >= average){
+                student.setLetterGrade("D");
+            } else{
+                student.setLetterGrade("F");
+            }
         }
     }
     public List<Student> readStudentsFromExcelFile(String excelFilePath) throws IOException {
         List<Student> listStudents = new ArrayList<>();
-        FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+        FileInputStream inputStream = new FileInputStream(excelFilePath);
 
         Workbook workbook = new XSSFWorkbook(inputStream);
         Sheet firstSheet = workbook.getSheetAt(0);
@@ -61,17 +72,13 @@ public class StudentController {
                 switch (columnIndex) {
                     case 0 -> student.setFirstName((String) getCellValue(nextCell));
                     case 1 -> student.setLastName((String) getCellValue(nextCell));
-                    case 2 -> {
-                        student.setGrade((double) getCellValue(nextCell));
-                        student.setLetterGrade(calculateLetterGrades((double)getCellValue(nextCell)));
-                    }
+                    case 2 -> student.setGrade((double) getCellValue(nextCell));
                 }
+                listStudents.add(student);
             }
-            listStudents.add(student);
+            workbook.close();
+            inputStream.close();
         }
-        workbook.close();
-        inputStream.close();
-
         return listStudents;
     }
 }

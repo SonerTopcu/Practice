@@ -17,6 +17,7 @@ public class MyObjectiveApplication {
 		String excelFilePath = "src/main/resources/Student Grades/Student Grades.xlsx";
 		StudentController controller = new StudentController();
 		List<Student> studentList = controller.readStudentsFromExcelFile(excelFilePath);
+		controller.calculateLetterGrades(studentList);
 		System.out.println(studentList.toString().replace("[","").replace("]","").replace(",", ""));
 
 		SpringApplication.exit(ctx, () -> 0);
