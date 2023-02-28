@@ -74,8 +74,8 @@ public class StudentController {
                     case 1 -> student.setLastName((String) getCellValue(nextCell));
                     case 2 -> student.setGrade((double) getCellValue(nextCell));
                 }
-                listStudents.add(student);
             }
+            listStudents.add(student);
             workbook.close();
             inputStream.close();
         }
